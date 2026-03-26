@@ -13,6 +13,28 @@ export const createJob = async (req, res, next) => {
   }
 };
 
+
+
+export const getMyJobs = async (req, res) => {
+  const jobs = await Job.find({ createdBy: req.user.id });
+
+  const jobsWithApplicants = await Promise.all(
+    jobs.map(async (job) => {
+      const applications = await Application.find({ job: job._id })
+        .populate("user", "name email resume profilePic");
+
+      return {
+        ...job._doc,
+        applicants: applications
+      };
+    })
+  );
+
+  res.json(jobsWithApplicants);
+};
+
+
+
 export const getJobs = async (req, res, next) => {
   try {
     const jobs = await Job.find().populate("createdBy", "name");
