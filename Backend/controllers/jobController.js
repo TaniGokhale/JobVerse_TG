@@ -1,69 +1,102 @@
 import Job from "../models/Job.js";
 import Application from "../models/Application.js";
 
-export const createJob = async (req, res, next) => {
+export const createJob = async (req, res) => {
   try {
     const job = await Job.create({
       ...req.body,
       createdBy: req.user.id
     });
     res.json(job);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-
-
-export const getMyJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.id });
-
-  const jobsWithApplicants = await Promise.all(
-    jobs.map(async (job) => {
-      const applications = await Application.find({ job: job._id })
-        .populate("user", "name email resume profilePic");
-
-      return {
-        ...job._doc,
-        applicants: applications
-      };
-    })
-  );
-
-  res.json(jobsWithApplicants);
-};
-
-
-
-export const getJobs = async (req, res, next) => {
+export const getJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().populate("createdBy", "name");
+    const jobs = await Job.find().populate("createdBy", "name email");
     res.json(jobs);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-export const applyJob = async (req, res, next) => {
+export const applyJob = async (req, res) => {
   try {
-    const existing = await Application.findOne({
-      user: req.user.id,
-      job: req.params.id
+    const { id } = req.params;
+
+    const exist = await Application.findOne({
+      job: id,
+      user: req.user.id
     });
 
-    if (existing) {
-      const err = new Error("Already applied");
-      err.status = 400;
-      return next(err);
+    if (exist) {
+      return res.status(400).json({ message: "Already applied" });
     }
 
     const application = await Application.create({
+      job: id,
       user: req.user.id,
-      job: req.params.id
+      status: "pending"
     });
 
     res.json(application);
-  } catch (error) {
-    next(error);
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getMyJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({ createdBy: req.user.id });
+
+    const result = await Promise.all(
+      jobs.map(async (job) => {
+        const applicants = await Application.find({ job: job._id })
+          .populate("user", "name email");
+
+        return {
+          ...job._doc,
+          applicants
+        };
+      })
+    );
+
+    res.json(result);
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const updateApplicationStatus = async (req, res) => {
+  try {
+    const { appId } = req.params;
+    const { status } = req.body;
+
+    const app = await Application.findByIdAndUpdate(
+      appId,
+      { status },
+      { returnDocument: "after" }
+    );
+
+    res.json(app);
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getAppliedJobs = async (req, res) => {
+  try {
+    const applications = await Application.find({ user: req.user.id })
+      .populate("job");
+
+    res.json(applications);
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

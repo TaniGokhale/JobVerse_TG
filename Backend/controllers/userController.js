@@ -1,16 +1,16 @@
 import User from "../models/User.js";
 
-export const uploadFiles = async (req, res) => {
-  const userId = req.user.id;
+export const updateProfile = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      req.body,
+      { returnDocument: "after" }
+    );
 
-  const resume = req.files["resume"]?.[0]?.path;
-  const profilePic = req.files["profilePic"]?.[0]?.path;
+    res.json(user);
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { resume, profilePic },
-    { new: true }
-  );
-
-  res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };

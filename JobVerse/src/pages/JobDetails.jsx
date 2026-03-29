@@ -21,10 +21,10 @@ export default function JobDetails() {
   return (
     <div className="container">
       <div className="card">
-        <h2>{job.title}</h2>
-        <p>{job.company}</p>
-        <p>{job.location}</p>
-        <p>{job.description}</p>
+        <h2>{job?.title}</h2>
+        <p>{job?.company}</p>
+        <p>{job?.description}</p>
+
         <button className="btn" onClick={apply}>Apply</button>
       </div>
     </div>
