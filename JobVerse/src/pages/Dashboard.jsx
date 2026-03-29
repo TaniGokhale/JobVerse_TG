@@ -1,71 +1,76 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import UserDashboard from "../pages/UserDashboard";
+import "../styles/Dashboard.css"
 export default function Dashboard() {
-  const user = JSON.parse(localStorage.getItem("user"));
   const [jobs, setJobs] = useState([]);
   const [job, setJob] = useState({});
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    if (user?.role === "recruiter") {
-      API.get("/jobs/my-jobs").then(res => setJobs(res.data));
-    }
+    fetchJobs();
   }, []);
 
-  const createJob = async () => {
-    await API.post("/jobs", job);
-    alert("Job Created");
-  };
-
-  const updateStatus = async (id, status) => {
-    await API.put(`/jobs/application/${id}`, { status });
+  const fetchJobs = async () => {
     const res = await API.get("/jobs/my-jobs");
     setJobs(res.data);
   };
 
+  const createJob = async () => {
+    await API.post("/jobs", job);
+    setShowForm(false);
+    fetchJobs();
+  };
+
+  const updateStatus = async (id, status) => {
+    await API.put(`/jobs/application/${id}`, { status });
+    fetchJobs();
+  };
+
   return (
-    <div className="container">
-      {user?.role === "recruiter" && (
-        <>
-          <div className="card">
-            <h2>Create Job</h2>
+    <div className="recruiter-container">
 
-            <input placeholder="Title" onChange={e => setJob({...job, title: e.target.value})} />
-            <input placeholder="Company" onChange={e => setJob({...job, company: e.target.value})} />
+      <div className="header">
+        <h2>Recruiter Dashboard</h2>
+        <button className="btn" onClick={() => setShowForm(!showForm)}>
+          {showForm ? "Close" : "Post Job"}
+        </button>
+      </div>
 
-            <button className="btn" onClick={createJob}>Post Job</button>
-          </div>
+      {showForm && (
+        <div className="job-form">
+          <input placeholder="Job Title" onChange={e => setJob({...job, title: e.target.value})} />
+          <input placeholder="Company" onChange={e => setJob({...job, company: e.target.value})} />
+          <input placeholder="Location" onChange={e => setJob({...job, location: e.target.value})} />
 
-          <h2>Your Jobs</h2>
-
-          {jobs.map(j => (
-            <div className="card" key={j._id}>
-              <h3>{j.title}</h3>
-              <p>{j.company}</p>
-
-              <h4>Applicants ({j.applicants.length})</h4>
-
-              {j.applicants.map(app => (
-                <div className="card" key={app._id}>
-                  <p>{app.user?.name}</p>
-                  <p>{app.user?.email}</p>
-                  <p>Status: {app.status}</p>
-
-                  <button className="btn" onClick={() => updateStatus(app._id, "shortlisted")}>
-                    Shortlist
-                  </button>
-
-                  <button className="btn" onClick={() => updateStatus(app._id, "rejected")}>
-                    Reject
-                  </button>
-                </div>
-              ))}
-            </div>
-          ))}
-        </>
+          <button className="btn" onClick={createJob}>Post Job</button>
+        </div>
       )}
 
-      {user?.role === "user" && <UserDashboard />}
+      <div className="job-grid">
+        {jobs.map(job => (
+          <div className="job-card" key={job._id}>
+            <h3>{job.title}</h3>
+            <p>{job.company}</p>
+            <p>{job.location}</p>
+
+            <h4>Applicants ({job.applicants.length})</h4>
+
+            {job.applicants.map(app => (
+              <div className="applicant-card" key={app._id}>
+                <p>{app.user.name}</p>
+                <p>{app.user.email}</p>
+                <p>Status: {app.status}</p>
+
+                <div className="btn-group">
+                  <button onClick={() => updateStatus(app._id, "shortlisted")}>Shortlist</button>
+                  <button onClick={() => updateStatus(app._id, "rejected")}>Reject</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 }

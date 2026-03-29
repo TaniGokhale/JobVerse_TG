@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+import "../styles/Home.css"
 
-function Home() {
+
+export default function Home() {
   const [jobs, setJobs] = useState([]);
   const navigate = useNavigate();
 
@@ -11,22 +13,30 @@ function Home() {
   }, []);
 
   return (
-    <div className="container">
-      <h2>Jobs</h2>
+    <div className="home-container">
 
-      {jobs.map(job => (
-        <div className="card" key={job._id}>
-          <h3>{job.title}</h3>
-          <p>{job.company}</p>
-          <p>{job.location}</p>
+      <h2>Find Your Dream Job</h2>
 
-          <button className="btn" onClick={() => navigate(`/job/${job._id}`)}>
-            View
-          </button>
-        </div>
-      ))}
+      <div className="job-list">
+        {jobs.map(job => (
+          <div className="job-card-indeed" key={job._id}>
+            
+            <div className="job-header">
+              <h3>{job.title}</h3>
+              <span className="badge">New</span>
+            </div>
+
+            <p className="company">{job.company}</p>
+            <p className="location">{job.location}</p>
+
+            <button onClick={() => navigate(`/job/${job._id}`)}>
+              View Details
+            </button>
+
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 }
-
-export default Home;

@@ -1,0 +1,46 @@
+.profile-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.profile-card {
+  width: 600px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-info p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.profile-info span {
+  font-weight: bold;
+  color: #FF7F50;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.edit-btn, .save-btn {
+  background: #FF7F50;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}

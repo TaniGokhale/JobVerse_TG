@@ -30,10 +30,35 @@ export const register = async (req, res) => {
       contact,
       location,
       experience,
-      currentCompany,
-      resume: req.files?.resume?.[0]?.filename || "",
-      profilePic: req.files?.profilePic?.[0]?.filename || ""
+      currentCompany
     });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET
+    );
+
+    res.json({ token, user });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
