@@ -18,6 +18,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/user", userRoutes);
 
+app.use(express.urlencoded({ extended: true }));
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("DB Connected");

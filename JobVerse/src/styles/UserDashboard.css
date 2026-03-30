@@ -1,46 +1,127 @@
-.profile-container {
+.dashboard {
   display: flex;
-  justify-content: center;
-  margin-top: 40px;
+  background: #f6f7fb;
+  min-height: 100vh;
 }
 
-.profile-card {
-  width: 600px;
-  background: white;
+/* SIDEBAR */
+.sidebar {
+  width: 230px;
+  background: linear-gradient(180deg, #FF7F50, #ff9966);
+  color: white;
+  padding: 20px;
+}
+
+.side-logo {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.menu p {
+  margin: 15px 0;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu p:hover {
+  transform: translateX(5px);
+}
+
+/* MAIN */
+.main {
+  flex: 1;
   padding: 30px;
+}
+
+/* PROFILE CARD */
+.profile-card {
+  background: white;
+  padding: 20px;
   border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-.profile-header {
+.profile-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
-.profile-info p {
-  margin: 10px 0;
-  font-size: 16px;
-}
-
-.profile-info span {
+/* AVATAR */
+.avatar {
+  width: 60px;
+  height: 60px;
+  background: #FF7F50;
+  color: white;
+  font-size: 24px;
   font-weight: bold;
-  color: #FF7F50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-input {
+/* BUTTON */
+.edit-btn {
+  background: #FF7F50;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* FORM */
+.edit-form input {
   width: 100%;
-  padding: 10px;
   margin: 8px 0;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
-.edit-btn, .save-btn {
-  background: #FF7F50;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 8px;
-  cursor: pointer;
+/* JOB SECTION */
+.job-section {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+/* JOB CARD */
+.job-card {
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.job-card:hover {
+  transform: translateY(-3px);
+}
+
+/* STATUS */
+.status {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.status.shortlisted {
+  background: #d4edda;
+  color: green;
+}
+
+.status.rejected {
+  background: #f8d7da;
+  color: red;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: orange;
 }

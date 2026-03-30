@@ -1,40 +1,67 @@
-.recruiter-container {
-  padding: 30px;
-}
-
-.header {
+.dashboard {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
 }
 
-.job-form {
+/* sidebar */
+.sidebar {
+  width: 220px;
+  background: #FF7F50;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar p {
+  margin: 15px 0;
+  cursor: pointer;
+}
+
+/* main */
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* card */
+.card {
   background: white;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-.job-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+/* header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
 }
 
+/* job */
 .job-card {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.applicant-card {
-  background: #f9f9f9;
+  border: 1px solid #eee;
   padding: 10px;
   margin-top: 10px;
   border-radius: 10px;
 }
 
-.btn-group button {
-  margin-right: 8px;
+/* applicant */
+.applicant {
+  background: #f9f9f9;
+  padding: 8px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
+/* status */
+.shortlisted {
+  color: green;
+}
+
+.rejected {
+  color: red;
+}
+
+.pending {
+  color: orange;
 }
