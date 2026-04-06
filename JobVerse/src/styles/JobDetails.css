@@ -1,0 +1,67 @@
+.job-details-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  background: #f6f7fb;
+}
+
+.job-main {
+  width: 800px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* HEADER */
+.job-main h1 {
+  margin-bottom: 10px;
+}
+
+/* TOP INFO */
+.top-info {
+  display: flex;
+  gap: 20px;
+  color: gray;
+  margin-bottom: 20px;
+}
+
+/* GRID */
+.info-grid {
+  display: flex;
+  justify-content: space-between;
+  background: #fff5f0;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.info-grid h4 {
+  margin-bottom: 5px;
+}
+
+/* SECTION */
+.section {
+  margin-top: 20px;
+}
+
+.section h3 {
+  margin-bottom: 8px;
+}
+
+/* APPLY BUTTON */
+.apply-btn {
+  margin-top: 25px;
+  background: #FF7F50;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+.apply-btn:hover {
+  background: #ff6333;
+}

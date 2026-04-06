@@ -1,39 +1,91 @@
-.home-container {
+/* LAYOUT */
+.home-wrapper {
+  display: flex;
+  background: #f6f7fb;
+  min-height: 100vh;
+}
+
+/* FILTER PANEL */
+.filter-panel {
+  width: 250px;
+  background: white;
+  padding: 20px;
+  border-right: 1px solid #eee;
+}
+
+.filter-panel h3 {
+  margin-bottom: 20px;
+}
+
+.filter-panel input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.filter-panel button {
+  width: 100%;
+  padding: 10px;
+  background: #FF7F50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* RIGHT SECTION */
+.job-section {
+  flex: 1;
   padding: 30px;
 }
 
-.job-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.job-section h2 {
+  margin-bottom: 20px;
 }
 
-.job-card-indeed {
+/* GRID */
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.job-card {
   background: white;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 15px;
   border: 1px solid #eee;
   transition: 0.3s;
+  cursor: pointer;
 }
 
-.job-card-indeed:hover {
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  transform: translateY(-3px);
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
+/* HEADER */
 .job-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
+/* TEXT */
 .company {
   font-weight: 600;
+  margin-top: 5px;
 }
 
 .location {
   color: gray;
+  font-size: 14px;
 }
 
+/* BADGE */
 .badge {
   background: #FF7F50;
   color: white;
@@ -42,11 +94,26 @@
   font-size: 12px;
 }
 
-button {
-  margin-top: 10px;
+/* BUTTON */
+.job-card button {
+  margin-top: 12px;
   background: #FF7F50;
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .home-wrapper {
+    flex-direction: column;
+  }
+
+  .filter-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
 }

@@ -7,24 +7,47 @@ export const createJob = async (req, res) => {
       ...req.body,
       createdBy: req.user.id
     });
+
     res.json(job);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+
 export const getJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().populate("createdBy", "name email");
+    const jobs = await Job.find().sort({ createdAt: -1 });
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+
+export const getJobById = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.json(job);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 export const applyJob = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const job = await Job.findById(id);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
 
     const exist = await Application.findOne({
       job: id,
@@ -47,6 +70,7 @@ export const applyJob = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const getMyJobs = async (req, res) => {
   try {
@@ -71,10 +95,15 @@ export const getMyJobs = async (req, res) => {
   }
 };
 
+
 export const updateApplicationStatus = async (req, res) => {
   try {
     const { appId } = req.params;
     const { status } = req.body;
+
+    if (!["pending", "shortlisted", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
 
     const app = await Application.findByIdAndUpdate(
       appId,
@@ -89,13 +118,17 @@ export const updateApplicationStatus = async (req, res) => {
   }
 };
 
-export const getAppliedJobs = async (req, res) => {
+
+ export const getAppliedJobs = async (req, res) => {
   try {
-    const applications = await Application.find({ user: req.user.id })
-      .populate("job");
+    const applications = await Application.find({
+      user: req.user.id
+    }).populate({
+      path: "job",
+      select: "title company location salary"
+    });
 
     res.json(applications);
-
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -12,11 +12,15 @@ import {
 const router = express.Router();
 
 router.post("/", protect, authorize("admin", "recruiter"), createJob);
-router.get("/", getJobs);
-router.post("/apply/:id", protect, authorize("user"), applyJob);
-router.get("/my-jobs", protect, authorize("recruiter"), getMyJobs);
-router.put("/application/:appId", protect, authorize("recruiter"), updateApplicationStatus);
-router.get("/applied", protect, authorize("user"), getAppliedJobs);
 
+router.get("/applied", protect, authorize("user"), getAppliedJobs); // 👈 TOP pe rakho
+
+router.get("/my-jobs", protect, authorize("recruiter"), getMyJobs);
+
+router.put("/application/:appId", protect, authorize("recruiter"), updateApplicationStatus);
+
+router.post("/apply/:id", protect, authorize("user"), applyJob);
+
+router.get("/", getJobs);
 
 export default router;

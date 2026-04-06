@@ -6,15 +6,17 @@
 
 /* SIDEBAR */
 .sidebar {
-  width: 230px;
+  width: 240px;
   background: linear-gradient(180deg, #FF7F50, #ff9966);
   color: white;
-  padding: 20px;
+  padding: 25px;
+  position: fixed;
+  height: 100vh;
 }
 
 .side-logo {
-  font-size: 24px;
-  margin-bottom: 30px;
+  font-size: 26px;
+  margin-bottom: 40px;
 }
 
 .menu p {
@@ -24,19 +26,20 @@
 }
 
 .menu p:hover {
-  transform: translateX(5px);
+  transform: translateX(8px);
 }
 
 /* MAIN */
 .main {
-  flex: 1;
+  margin-left: 260px;
   padding: 30px;
+  width: 100%;
 }
 
 /* PROFILE CARD */
 .profile-card {
   background: white;
-  padding: 20px;
+  padding: 25px;
   border-radius: 15px;
   margin-bottom: 25px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.08);
@@ -62,21 +65,44 @@
   border-radius: 50%;
 }
 
+/* PROFILE INFO */
+.profile-info p {
+  margin: 10px 0;
+}
+
+.profile-info span {
+  font-weight: bold;
+  color: #FF7F50;
+}
+
 /* BUTTON */
-.edit-btn {
+.edit-btn, .save-btn {
   background: #FF7F50;
   color: white;
   border: none;
-  padding: 8px 14px;
+  padding: 8px 15px;
   border-radius: 8px;
   cursor: pointer;
 }
 
 /* FORM */
-.edit-form input {
+.edit-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 13px;
+  color: gray;
+}
+
+.form-group input {
   width: 100%;
-  margin: 8px 0;
   padding: 10px;
+  margin-top: 4px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
@@ -100,13 +126,14 @@
 
 .job-card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
 }
 
 /* STATUS */
 .status {
   display: inline-block;
   margin-top: 8px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
   font-size: 13px;
 }

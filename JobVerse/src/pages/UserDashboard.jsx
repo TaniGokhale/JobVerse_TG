@@ -3,20 +3,56 @@ import API from "../services/api";
 import "../styles/UserDashboard.css";
 
 export default function UserDashboard() {
-  const user = JSON.parse(localStorage.getItem("user"));
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState(user);
   const [appliedJobs, setAppliedJobs] = useState([]);
 
   useEffect(() => {
-    API.get("/jobs/applied").then(res => setAppliedJobs(res.data));
+    fetchApplied();
   }, []);
 
+  // 👉 GET APPLIED JOBS
+  const fetchApplied = async () => {
+    try {
+      const res = await API.get("/jobs/applied");
+      setAppliedJobs(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 👉 FINAL UPDATE PROFILE (FORMDATA)
   const updateProfile = async () => {
-    const res = await API.put("/user/profile", form);
-    localStorage.setItem("user", JSON.stringify(res.data));
-    setEdit(false);
+    try {
+      const formData = new FormData();
+
+      Object.keys(form).forEach(key => {
+        formData.append(key, form[key]);
+      });
+
+      if (form.resumeFile) {
+        formData.append("resume", form.resumeFile);
+      }
+
+      if (form.profilePicFile) {
+        formData.append("profilePic", form.profilePicFile);
+      }
+
+      const res = await API.put("/user/profile", formData);
+
+      localStorage.setItem("user", JSON.stringify(res.data));
+      setUser(res.data);
+      setForm(res.data);
+
+      setEdit(false);
+
+      alert("Profile Updated ✅");
+
+    } catch (err) {
+      console.log(err);
+      alert("Update failed ❌");
+    }
   };
 
   return (
@@ -40,7 +76,7 @@ export default function UserDashboard() {
 
           <div className="profile-top">
             <div className="avatar">
-              {user.name.charAt(0).toUpperCase()}
+              {user?.name?.charAt(0).toUpperCase()}
             </div>
 
             <div>
@@ -53,12 +89,85 @@ export default function UserDashboard() {
             </button>
           </div>
 
+          {/* 👉 EDIT FORM */}
           {edit && (
             <div className="edit-form">
-              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-              <input value={form.contact} onChange={e => setForm({...form, contact: e.target.value})} />
-              <input value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
-              <button onClick={updateProfile}>Save</button>
+
+              <div className="form-group">
+                <label>Name</label>
+                <input
+                  placeholder="Enter your name"
+                  value={form.name || ""}
+                  onChange={e => setForm({ ...form, name: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  placeholder="Enter your email"
+                  value={form.email || ""}
+                  onChange={e => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Contact</label>
+                <input
+                  placeholder="Enter contact"
+                  value={form.contact || ""}
+                  onChange={e => setForm({ ...form, contact: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Location</label>
+                <input
+                  placeholder="Enter location"
+                  value={form.location || ""}
+                  onChange={e => setForm({ ...form, location: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Experience</label>
+                <input
+                  placeholder="Experience"
+                  value={form.experience || ""}
+                  onChange={e => setForm({ ...form, experience: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Current Company</label>
+                <input
+                  placeholder="Company"
+                  value={form.currentCompany || ""}
+                  onChange={e => setForm({ ...form, currentCompany: e.target.value })}
+                />
+              </div>
+
+              {/* 👉 FILE UPLOAD */}
+              <div className="form-group">
+                <label>Resume</label>
+                <input
+                  type="file"
+                  onChange={e => setForm({ ...form, resumeFile: e.target.files[0] })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Profile Picture</label>
+                <input
+                  type="file"
+                  onChange={e => setForm({ ...form, profilePicFile: e.target.files[0] })}
+                />
+              </div>
+
+              <button className="save-btn" onClick={updateProfile}>
+                Save Changes
+              </button>
+
             </div>
           )}
 
@@ -68,16 +177,20 @@ export default function UserDashboard() {
         <div className="job-section">
           <h2>Applied Jobs</h2>
 
-          {appliedJobs.map(job => (
-            <div className="job-card" key={job._id}>
-              <h3>{job.job.title}</h3>
-              <p>{job.job.company}</p>
+          {appliedJobs.length === 0 && <p>No jobs applied yet</p>}
 
-              <span className={`status ${job.status}`}>
-                {job.status || "under process"}
+          {appliedJobs.map(app => (
+            <div className="job-card" key={app._id}>
+              <h3>{app.job?.title}</h3>
+              <p>{app.job?.company}</p>
+              <p>{app.job?.location}</p>
+
+              <span className={`status ${app.status}`}>
+                {app.status || "pending"}
               </span>
             </div>
           ))}
+
         </div>
 
       </div>
