@@ -65,3 +65,59 @@
 .apply-btn:hover {
   background: #ff6333;
 }
+
+.loading {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.filled-badge {
+  display: inline-block;
+  background: #ff4d4d;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.apply-btn {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: #ff7f50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.apply-btn:hover {
+  background: #ff5722;
+}
+
+.apply-btn.disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+.apply-btn.applied {
+  background: green;
+  cursor: default;
+}
+
+.withdraw-btn {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: #e53935;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.withdraw-btn:hover {
+  background: #c62828;
+}

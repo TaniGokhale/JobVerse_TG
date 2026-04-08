@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "../styles/navbar.css"
+import "../styles/navbar.css";
+
 export default function Navbar() {
   const [user, setUser] = useState(null);
   const [dropdown, setDropdown] = useState(false);
@@ -10,13 +11,32 @@ export default function Navbar() {
 
   const navigate = useNavigate();
 
+  // 🔥 load user
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("user")));
   }, []);
 
+  // 🔥 load saved theme
   useEffect(() => {
-    document.body.className = dark ? "dark" : "";
-  }, [dark]);
+    const saved = localStorage.getItem("theme");
+
+    if (saved === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      setDark(true);
+    }
+  }, []);
+
+  // 🔥 toggle theme
+  const toggleTheme = () => {
+    if (dark) {
+      document.documentElement.removeAttribute("data-theme");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+    }
+    setDark(!dark);
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -46,7 +66,7 @@ export default function Navbar() {
           <>
             <Link to="/dashboard">Dashboard</Link>
 
-            {/* 🔔 Notification Bell */}
+            {/* 🔔 Notification */}
             <div className="notif-box">
               <div className="bell" onClick={() => setShowNotif(!showNotif)}>
                 🔔
@@ -62,7 +82,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Avatar */}
+            {/* 👤 Avatar */}
             <div className="avatar-box">
               <div className="avatar" onClick={() => setDropdown(!dropdown)}>
                 {user.name?.charAt(0).toUpperCase()}
@@ -73,9 +93,10 @@ export default function Navbar() {
                   <p>{user.name}</p>
                   <p>{user.email}</p>
 
-                  <button onClick={() => setDark(!dark)}>
-                    {dark ? "Light Mode" : "Dark Mode"}
-                  </button>
+                  {/* 🌙 DARK MODE */}
+                  {/* <button onClick={toggleTheme}>
+                    {dark ? "☀️ Light Mode" : "🌙 Dark Mode"}
+                  </button> */}
 
                   <button onClick={logout}>Logout</button>
                 </div>
@@ -86,6 +107,7 @@ export default function Navbar() {
 
       </div>
 
+      {/* ☰ MOBILE MENU */}
       <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
         ☰
       </div>

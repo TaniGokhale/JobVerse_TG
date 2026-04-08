@@ -7,7 +7,7 @@ const router = express.Router();
 
 /*
 ========================================
-👉 UPDATE PROFILE (TEXT + FILES)
+👉 UPDATE PROFILE (FINAL FIXED)
 ========================================
 */
 router.put(
@@ -21,7 +21,9 @@ router.put(
     try {
       const userId = req.user.id;
 
-      // 👉 fields safely extract
+      console.log("BODY:", req.body);
+      console.log("FILES:", req.files);
+
       const {
         name,
         email,
@@ -31,31 +33,34 @@ router.put(
         currentCompany
       } = req.body;
 
-      // 👉 file handling
-      const resume = req.files?.resume?.[0]?.path;
-      const profilePic = req.files?.profilePic?.[0]?.path;
+      const updateData = {};
 
-      // 👉 only update provided fields
-      const updateData = {
-        ...(name && { name }),
-        ...(email && { email }),
-        ...(contact && { contact }),
-        ...(location && { location }),
-        ...(experience && { experience }),
-        ...(currentCompany && { currentCompany }),
-        ...(resume && { resume }),
-        ...(profilePic && { profilePic })
-      };
+      if (name) updateData.name = name;
+      if (email) updateData.email = email;
+      if (contact) updateData.contact = contact;
+      if (location) updateData.location = location;
+      if (experience) updateData.experience = experience;
+      if (currentCompany) updateData.currentCompany = currentCompany;
+
+      // ✅ FILE SAFE HANDLE
+      if (req.files?.resume) {
+        updateData.resume = req.files.resume[0].path;
+      }
+
+      if (req.files?.profilePic) {
+        updateData.profilePic = req.files.profilePic[0].path;
+      }
 
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         updateData,
-        { returnDocument: "after" }
+        { new: true } // IMPORTANT FIX
       );
 
       res.json(updatedUser);
 
     } catch (err) {
+      console.log(err);
       res.status(500).json({ message: err.message });
     }
   }
@@ -63,7 +68,7 @@ router.put(
 
 /*
 ========================================
-👉 GET CURRENT USER PROFILE
+👉 GET PROFILE (for refresh)
 ========================================
 */
 router.get("/me", protect, async (req, res) => {

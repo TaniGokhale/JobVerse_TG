@@ -1,6 +1,7 @@
 import Job from "../models/Job.js";
 import Application from "../models/Application.js";
 
+// CREATE JOB
 export const createJob = async (req, res) => {
   try {
     const job = await Job.create({
@@ -14,7 +15,7 @@ export const createJob = async (req, res) => {
   }
 };
 
-
+// GET ALL JOBS
 export const getJobs = async (req, res) => {
   try {
     const jobs = await Job.find().sort({ createdAt: -1 });
@@ -24,7 +25,7 @@ export const getJobs = async (req, res) => {
   }
 };
 
-
+// GET JOB BY ID (IMPORTANT FOR VIEW DETAILS)
 export const getJobById = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
@@ -39,25 +40,37 @@ export const getJobById = async (req, res) => {
   }
 };
 
-
+// APPLY JOB
 export const applyJob = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // ✅ CHECK JOB EXISTS
     const job = await Job.findById(id);
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
 
+    // ✅ BLOCK IF FILLED
+    if (job.isFilled) {
+      return res.status(400).json({
+        message: "Position already filled ❌"
+      });
+    }
+
+    // ✅ CHECK ALREADY APPLIED
     const exist = await Application.findOne({
       job: id,
       user: req.user.id
     });
 
     if (exist) {
-      return res.status(400).json({ message: "Already applied" });
+      return res.status(400).json({
+        message: "Already applied"
+      });
     }
 
+    // ✅ CREATE APPLICATION
     const application = await Application.create({
       job: id,
       user: req.user.id,
@@ -71,7 +84,7 @@ export const applyJob = async (req, res) => {
   }
 };
 
-
+// ✅ IMPORTANT: Recruiter Dashboard (FULL USER DATA)
 export const getMyJobs = async (req, res) => {
   try {
     const jobs = await Job.find({ createdBy: req.user.id });
@@ -79,7 +92,7 @@ export const getMyJobs = async (req, res) => {
     const result = await Promise.all(
       jobs.map(async (job) => {
         const applicants = await Application.find({ job: job._id })
-          .populate("user", "name email");
+          .populate("user"); // 👈 FULL USER DATA (IMPORTANT FIX)
 
         return {
           ...job._doc,
@@ -95,20 +108,16 @@ export const getMyJobs = async (req, res) => {
   }
 };
 
-
+// UPDATE STATUS
 export const updateApplicationStatus = async (req, res) => {
   try {
     const { appId } = req.params;
     const { status } = req.body;
 
-    if (!["pending", "shortlisted", "rejected"].includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
-    }
-
     const app = await Application.findByIdAndUpdate(
       appId,
       { status },
-      { returnDocument: "after" }
+      { new: true }
     );
 
     res.json(app);
@@ -118,17 +127,82 @@ export const updateApplicationStatus = async (req, res) => {
   }
 };
 
-
- export const getAppliedJobs = async (req, res) => {
+// USER APPLIED JOBS
+export const getAppliedJobs = async (req, res) => {
   try {
     const applications = await Application.find({
       user: req.user.id
-    }).populate({
-      path: "job",
-      select: "title company location salary"
-    });
+    }).populate("job");
 
     res.json(applications);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+// ✅ DELETE JOB
+export const deleteJob = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) return res.status(404).json({ message: "Job not found" });
+
+    if (job.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    await job.deleteOne();
+
+    res.json({ message: "Job removed" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ✅ MARK POSITION FILLED
+export const markFilled = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    // ✅ only recruiter who created can close
+    if (job.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    job.status = "closed";
+    await job.save();
+
+    res.json({ message: "Job marked as filled", job });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ✅ WITHDRAW APPLICATION (candidate)
+export const withdrawApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const application = await Application.findOne({
+      job: id,
+      user: req.user.id
+    });
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    await application.deleteOne();
+
+    res.json({ message: "Application withdrawn successfully" });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
